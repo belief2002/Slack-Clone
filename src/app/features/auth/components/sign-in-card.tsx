@@ -12,17 +12,21 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SignInFlow } from "../types";
 import { useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignInCardProps {
-    setState: (state: SignInFlow) => void;
+  setState: (state: SignInFlow) => void;
 }
 
-export const SignInCard = (
-    { setState }: SignInCardProps
-) => {
+export const SignInCard = ({ setState }: SignInCardProps) => {
+  const { signIn } = useAuthActions();
 
-const [email,setEmail] = useState("")
-const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleProviderSignIn = (value: "github" | "google") =>{
+    signIn(value);
+  }
 
   return (
     <Card className="w-full h-full p-8">
@@ -71,7 +75,7 @@ const [password, setPassword] = useState("")
           {/* Github */}
           <Button
             disabled={false}
-            onClick={() => {}}
+            onClick={() => {handleProviderSignIn("github")}}
             variant="outline"
             size="lg"
             className=" w-full relative"
@@ -81,7 +85,13 @@ const [password, setPassword] = useState("")
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-            Don&apos;t have an account? <span onClick={() => setState("signUp")} className=" text-sky-700 hover:underline cursor-pointer">Sign up</span>
+          Don&apos;t have an account?{" "}
+          <span
+            onClick={() => setState("signUp")}
+            className=" text-sky-700 hover:underline cursor-pointer"
+          >
+            Sign up
+          </span>
         </p>
       </CardContent>
     </Card>
