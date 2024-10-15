@@ -12,15 +12,45 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SignInFlow } from "../types";
 import { useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { TriangleAlert } from "lucide-react";
 
 interface SignUpCarddProps {
   setState: (state: SignInFlow) => void;
 }
 
 export const SignUpCard = ({ setState }: SignUpCarddProps) => {
+  const { signIn } = useAuthActions();
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const onPasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    setPending(true);
+
+    signIn("password", { name, email, password, flow: "signUp" })
+      .catch(() => {
+        setError("Something went wrong.");
+      })
+      .finally(() => {
+        setPending(false);
+      });
+  };
+
+  const onProviderSignUp = (value: "github" | "google") => {
+    setPending(true);
+    signIn(value).finally(() => setPending(false));
+  };
   return (
     <Card className="w-full h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -30,10 +60,26 @@ export const SignUpCard = ({ setState }: SignUpCarddProps) => {
         </CardDescription>
       </CardHeader>
 
+      {!!error && (
+        <div className="flex items-center rounded-md p-3 bg-destructive/15 gap-x-2 text-sm text-destructive mb-6">
+          <TriangleAlert className="size-4" />
+          <p>{error}</p>
+        </div>
+      )}
+
       <CardContent className=" pb-0 px-0 space-y-5">
-        <form className=" space-y-1.5">
+        <form onSubmit={onPasswordSignUp} className=" space-y-1.5">
           <Input
-            disabled={false}
+            disabled={pending}
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+            }}
+            placeholder="Full name"
+            required
+          />
+          <Input
+            disabled={pending}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
@@ -43,7 +89,7 @@ export const SignUpCard = ({ setState }: SignUpCarddProps) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={pending}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
@@ -51,14 +97,14 @@ export const SignUpCard = ({ setState }: SignUpCarddProps) => {
             required
           />
           <Input
-            disabled={false}
+            disabled={pending}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm Password"
             type="password"
             required
           />
-          <Button type="submit" className="w-full" size="lg" disabled={false}>
+          <Button type="submit" className="w-full" size="lg" disabled={pending}>
             Continue
           </Button>
         </form>
@@ -66,8 +112,10 @@ export const SignUpCard = ({ setState }: SignUpCarddProps) => {
         <div className="flex flex-col gap-y-2.5">
           {/* Google */}
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={pending}
+            onClick={() => {
+              onProviderSignUp("google");
+            }}
             variant="outline"
             size="lg"
             className=" w-full relative"
@@ -77,8 +125,10 @@ export const SignUpCard = ({ setState }: SignUpCarddProps) => {
           </Button>
           {/* Github */}
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={pending}
+            onClick={() => {
+              onProviderSignUp("github");
+            }}
             variant="outline"
             size="lg"
             className=" w-full relative"
