@@ -92,9 +92,9 @@ setError("Invalid email or password")
             onClick={() => {onProviderSignIn("google")}}
             variant="outline"
             size="lg"
-            className=" w-full relative"
+            className="w-full relative"
           >
-            <FcGoogle className=" mr-1 size-5" />
+            <FcGoogle className="mr-1 size-5" />
             Continue with Google
           </Button>
           {/* Github */}
@@ -103,7 +103,7 @@ setError("Invalid email or password")
             onClick={() => {onProviderSignIn("github")}}
             variant="outline"
             size="lg"
-            className=" w-full relative"
+            className="w-full relative"
           >
             <FaGithub className=" mr-1 size-5" />
             Continue with Github
@@ -113,7 +113,7 @@ setError("Invalid email or password")
           Don&apos;t have an account?{" "}
           <span
             onClick={() => setState("signUp")}
-            className=" text-sky-700 hover:underline cursor-pointer"
+            className="text-sky-700 hover:underline cursor-pointer"
           >
             Sign up
           </span>
