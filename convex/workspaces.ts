@@ -113,7 +113,7 @@ export const update = mutation({
       )
       .unique();
 
-    if (!member || member.role == "admin") {
+    if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
 
@@ -143,7 +143,7 @@ export const remove = mutation({
       )
       .unique();
 
-    if (!member || member.role == "admin") {
+    if (!member || member.role !== "admin") {
       throw new Error("Unauthorized");
     }
 
@@ -154,7 +154,7 @@ export const remove = mutation({
         .collect(),
     ]);
 
-    for(const member of members){
+    for (const member of members) {
       await ctx.db.delete(member._id);
     }
 
