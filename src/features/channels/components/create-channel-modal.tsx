@@ -10,8 +10,11 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useCreateChannel } from "../api/use-create-channel";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const CreateChannelModal = () => {
+  const router = useRouter();
   const workspaceId = useWorkspaceId();
   const [open, setOpen] = useCreateChannelModal();
   const [name, setName] = useState("");
@@ -25,27 +28,28 @@ export const CreateChannelModal = () => {
     setOpen(false);
   };
 
-  const {mutate, isPending} = useCreateChannel();
+  const { mutate, isPending } = useCreateChannel();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutate({
-      name,
-      workspaceId,
-    },
-    {
-      onSuccess: () => {
-       
-        // TODO: Navigate to the new channel
-        handleClose();
+    mutate(
+      {
+        name,
+        workspaceId,
       },
-      onError: () => {
-        // TODO: Show error message
-      },
-    }
-  );
-
-  }
+      {
+        onSuccess: (id) => {
+          router.push(`/workspace/${workspaceId}/channel/${id}`);
+          toast.success("Channel created successfully.");
+          handleClose();
+        },
+        onError: () => {
+          // TODO: Show error message
+          toast.error("Failed to create channel")
+        },
+      }
+    );
+  };
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
