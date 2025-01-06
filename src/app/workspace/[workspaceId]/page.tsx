@@ -62,7 +62,7 @@ const workspaceIdPage = () => {
   if(!workspace || !member){
     return(
       <div className="flex flex-1 h-full items-center justify-center flex-col gap-2">
-        <TriangleAlert className=" size-6 text-red-600 text-muted-foreground"/>
+        <TriangleAlert className=" size-6 text-rose-600 text-muted-foreground"/>
         <p className="text-sm text-muted-foreground">Workspace not found</p>
       </div>
     )
@@ -70,7 +70,7 @@ const workspaceIdPage = () => {
 
   return(
     <div className="flex flex-1 h-full items-center justify-center flex-col gap-2">
-      <TriangleAlert className=" size-6 text-red-600 text-muted-foreground"/>
+      <TriangleAlert className=" size-6 text-rose-600 text-muted-foreground"/>
       <p className="text-sm text-muted-foreground">No channel found.</p>
     </div>
   )};
