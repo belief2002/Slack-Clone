@@ -11,10 +11,11 @@ import {
   useState,
 } from "react";
 import { Button } from "./ui/button";
-import { ImageIcon, SmileIcon } from "lucide-react";
+import { ImageIcon, SmileIcon, XIcon } from "lucide-react";
 import { Hint } from "./hint";
 import { cn } from "@/lib/utils";
 import { EmojiPopover } from "./emoji-popover";
+import Image from "next/image";
 
 type EditorValue = {
   image: File | null;
@@ -39,7 +40,8 @@ const Editor = ({
   variant = "create",
 }: EditorProps) => {
   const [text, setText] = useState("");
-  const[isToolbarVisible, setIsToolbarVisible] = useState(true);
+  const [isToolbarVisible, setIsToolbarVisible] = useState(true);
+  const [image, setImage] = useState<File | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const submitRef = useRef(onSubmit);
@@ -49,6 +51,7 @@ const Editor = ({
   // const variantRef = useRef(variant);
   const placeholderRef = useRef(placeholder);
   const quillRef = useRef<Quill | null>(null);
+  const imageElementRef = useRef<HTMLInputElement>(null);
 
   useLayoutEffect(() => {
     submitRef.current = onSubmit;
@@ -69,31 +72,31 @@ const Editor = ({
     const options: QuillOptions = {
       theme: "snow",
       placeholder: placeholderRef.current,
-      modules:{
-        toolbar:[
+      modules: {
+        toolbar: [
           ["bold", "italic", "underline", "strike"],
-          [{list:"ordered"}, {list:"bullet"}],
+          [{ list: "ordered" }, { list: "bullet" }],
           ["link"],
         ],
-        keyboard:{
-          bindings:{
-            enter:{
-              key:"Enter",
-              handler:()=>{
+        keyboard: {
+          bindings: {
+            enter: {
+              key: "Enter",
+              handler: () => {
                 //TODO: Submit the form
                 return;
-              }
+              },
             },
-            shift_enter:{
-              key:"Enter",
-              shiftKey:true,
-              handler:()=>{
+            shift_enter: {
+              key: "Enter",
+              shiftKey: true,
+              handler: () => {
                 quill.insertText(quill.getSelection()?.index || 0, "\n");
-              }
-            }
-          }
-        }
-      }
+              },
+            },
+          },
+        },
+      },
     };
     const quill = new Quill(editorContainer, options);
     quillRef.current = quill;
@@ -125,27 +128,61 @@ const Editor = ({
   }, [innerRef]);
 
   const toggleToolbar = () => {
-    setIsToolbarVisible((current)=>!current);
+    setIsToolbarVisible((current) => !current);
     const toolbarElement = containerRef.current?.querySelector(".ql-toolbar");
 
-    if(toolbarElement){
+    if (toolbarElement) {
       toolbarElement.classList.toggle("hidden");
     }
-  }
-  const onEmojiSelect = (emoji:any) => {
+  };
+  const onEmojiSelect = (emoji: any) => {
     const quill = quillRef.current;
-     quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
-  }
+    quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
+  };
 
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
   // console.log(isEmpty);
 
   return (
     <div className="flex flex-col">
+      <input
+        type="file"
+        accept="image/*"
+        ref={imageElementRef}
+        onChange={(event) => {
+          setImage(event.target.files![0]);
+        }}
+        className="hidden"
+      />
       <div className="flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white">
         <div ref={containerRef} className="h-full ql-custom" />
+        {!!image && (
+          <div className="p-2">
+            <div className="flex items-center justify-center relative size-[62px] group/image">
+            <Hint label="Remove image">
+              <button
+                onClick={() => {
+                  setImage(null);
+                  imageElementRef.current!.value = "";
+                }}
+                className="hidden group-hover/image:flex absolute rounded-full bg-black/70 hover:bg-black -top-2.5 -right-2.5 text-white size-6 z-[4] border-2 border-white items-center justify-center"
+              >
+                <XIcon className="size-3.5" />
+              </button>
+              </Hint>
+              <Image
+              src={URL.createObjectURL(image)}
+              alt="uploaded"
+              fill
+              className="rounded-xl overflow-hidden border object-cover"
+              />
+            </div>
+          </div>
+        )}
         <div className="flex px-2 pb-2 z-[5]">
-          <Hint label={isToolbarVisible ? "Hide formatting" : "Show formatting"}>
+          <Hint
+            label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
+          >
             <Button
               disabled={disabled}
               onClick={toggleToolbar}
@@ -156,21 +193,17 @@ const Editor = ({
             </Button>
           </Hint>
           {/* Emoji */}
-          <EmojiPopover onEmojiSelect={onEmojiSelect} >
-            <Button
-              disabled={disabled}
-              size="iconSm"
-              variant="ghost"
-            >
+          <EmojiPopover onEmojiSelect={onEmojiSelect}>
+            <Button disabled={disabled} size="iconSm" variant="ghost">
               <SmileIcon className="size-4" />
             </Button>
           </EmojiPopover>
-
+          {/* Add file */}
           {variant === "create" && (
             <Hint label="Attach files">
               <Button
                 disabled={disabled}
-                onClick={() => {}}
+                onClick={() => imageElementRef.current?.click()}
                 size="iconSm"
                 variant="ghost"
               >
@@ -216,14 +249,16 @@ const Editor = ({
         </div>
       </div>
       {variant === "create" && (
-      <div className={cn(
-        "flex justify-end p-2 text-muted-foreground opacity-0 text-[10px]",
-        !isEmpty && "opacity-100"
-        )}>
-        <p>
-          <strong>Shift + Return</strong> to add a new line
-        </p>
-      </div>
+        <div
+          className={cn(
+            "flex justify-end p-2 text-muted-foreground opacity-0 text-[10px]",
+            !isEmpty && "opacity-100"
+          )}
+        >
+          <p>
+            <strong>Shift + Return</strong> to add a new line
+          </p>
+        </div>
       )}
     </div>
   );
