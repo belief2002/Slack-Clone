@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { ImageIcon, SmileIcon } from "lucide-react";
 import { Hint } from "./hint";
 import { cn } from "@/lib/utils";
+import { EmojiPopover } from "./emoji-popover";
 
 type EditorValue = {
   image: File | null;
@@ -131,6 +132,10 @@ const Editor = ({
       toolbarElement.classList.toggle("hidden");
     }
   }
+  const onEmojiSelect = (emoji:any) => {
+    const quill = quillRef.current;
+     quill?.insertText(quill.getSelection()?.index || 0, emoji.native);
+  }
 
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
   // console.log(isEmpty);
@@ -150,17 +155,16 @@ const Editor = ({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-
-          <Hint label="Emoji">
+          {/* Emoji */}
+          <EmojiPopover onEmojiSelect={onEmojiSelect} >
             <Button
               disabled={disabled}
-              onClick={() => {}}
               size="iconSm"
               variant="ghost"
             >
               <SmileIcon className="size-4" />
             </Button>
-          </Hint>
+          </EmojiPopover>
 
           {variant === "create" && (
             <Hint label="Attach files">
