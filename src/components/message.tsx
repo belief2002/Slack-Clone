@@ -1,4 +1,12 @@
+import dynamic from "next/dynamic";
 import { Doc, Id } from "../../convex/_generated/dataModel";
+import { format, isToday, isYesterday } from "date-fns";
+import { Hint } from "./hint";
+import { Avatar, AvatarFallback } from "./ui/avatar";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import { Thumbnail } from "./thumbnail";
+
+const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 
 interface MessageProps {
   id: Id<"messages">;
@@ -8,10 +16,10 @@ interface MessageProps {
   isAuthor: boolean;
   reactions: Array<
     Omit<Doc<"reactions">, "memberId"> & {
-        count: number;
-        memberIds: Id<"members">[];
+      count: number;
+      memberIds: Id<"members">[];
     }
-  >
+  >;
   body: Doc<"messages">["body"];
   image: string | null | undefined;
   createdAt: Doc<"messages">["_creationTime"];
@@ -25,12 +33,16 @@ interface MessageProps {
   threadTimestamp?: number;
 }
 
-export const Message =({
+const formatFullTime = (date: Date) => {
+  return `${isToday(date) ? "Today" : isYesterday(date) ? "Yesterday" : format(date, "MMM d, yyyy")} at ${format(date, "h:mm a")}`;
+};
+
+export const Message = ({
   id,
   memberId,
   isAuthor,
   authorImage,
-  authorName="Member",
+  authorName = "Member",
   reactions,
   body,
   image,
@@ -43,10 +55,61 @@ export const Message =({
   threadCount,
   threadImage,
   threadTimestamp,
-}: MessageProps)=>{
-  return(
-    <div>
-      {JSON.stringify(body)}
+}: MessageProps) => {
+  if (isCompact) {
+    return (
+      <div className="flex flex-col gap-x-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
+        <div className="flex text-xs items-start w-full ml-8 gap-x-2">
+          <Renderer value={body} />
+          <Thumbnail url={image} />
+
+          <div className="flex items-center">
+            {updatedAt ? (
+              <span className="text-xs text-muted-foreground">(edited)</span>
+            ) : null}
+            <Hint label={formatFullTime(new Date(createdAt))}>
+              <button className="text-xs opacity-0 text-muted-foreground group-hover:opacity-100 w-[60px] leading-[22px] text-center hover:underline">
+                {format(new Date(createdAt), "hh:mm a")}
+              </button>
+            </Hint>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const avatarFallback = authorName.charAt(0).toUpperCase();
+
+  return (
+    <div className="flex flex-col gap-x-2 p-1.5 px-5 hover:bg-gray-100/60 group relative">
+      <div className="flex items-start gap-x-2">
+        <button>
+          <Avatar className="size-5 mr-1">
+            <AvatarImage src={authorImage} />
+            <AvatarFallback>{avatarFallback}</AvatarFallback>
+          </Avatar>
+        </button>
+        <div className="flex flex-col overflow-hidden w-full">
+          <div className="text-sm flex gap-x-1">
+            <button
+              onClick={() => {}}
+              className="font-bold text-primary  hover:underline"
+            >
+              {authorName}
+            </button>
+            <Hint label={formatFullTime(new Date(createdAt))}>
+              <button className="text-xs text-muted-foreground hover:underline">
+                {format(new Date(createdAt), "hh:mm a")}
+              </button>
+            </Hint>
+          </div>
+          <Renderer value={body} />
+          <Thumbnail url={image} />
+          {updatedAt ? (
+            <span className="text-xs text-muted-foreground">(edited)</span>
+          ) : null}
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
