@@ -25,7 +25,7 @@ export const Thumbnail = ({ url }: ThumbnailProps) => {
           />
         </div>
       </DialogTrigger>
-      <DialogContent className="maz-w-[800px]  border-none h-auto bg-transparent p-0 shadow-none">
+      <DialogContent className="maz-w-[800px] text-white  border-none h-auto bg-transparent p-0 shadow-none">
       <ScrollArea className="max-h-[700px]">
         <img
           src={url}
