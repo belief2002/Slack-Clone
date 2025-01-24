@@ -5,6 +5,7 @@ import { Hint } from "./hint";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { Thumbnail } from "./thumbnail";
+import { Toolbar } from "./toolbar";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 
@@ -110,6 +111,18 @@ export const Message = ({
           ) : null}
         </div>
       </div>
+      {!isEditing && (
+        <Toolbar
+          isAuthor={isAuthor}
+          isPending={false}
+          handleEdit={()=>setEditingId(id)}
+          handleThread={()=>{}}
+          handleDelete={()=>{}}
+          hideThreadButton={hideThreadButton}
+          handleReaction={()=>{}}
+
+        />
+      )}
     </div>
   );
 };
