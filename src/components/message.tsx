@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
+import { Reactions } from "./Reactions";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -71,8 +73,19 @@ export const Message = ({
     useUpdateMessage();
   const { mutate: removeMessage, isPending: isRemovingMessage } =
     useRemoveMessage();
+  const { mutate: toggleReaction, isPending: isTogglingReaction } =
+    useToggleReaction();
 
   const isPending = isUpdatingMessage;
+
+  const handleReaction = (value:string) =>{
+    toggleReaction({messageId: id, value},{
+      
+      onError: (error) => {
+        toast.error("Failed to add reaction");
+      },
+    })
+  }
 
   const handleRemove = async () => {
     const ok = await confirm();
@@ -134,11 +147,11 @@ export const Message = ({
               />
             </div>
           ) : (
-            <div className="flex text-xs items-start w-full ml-8 gap-x-2">
+            <div className="flex text-xs flex-col items-start w-full ml-8 gap-x-2">
+
+              <div className="flex gap-x-1 items-center">
               <Renderer value={body} />
               <Thumbnail url={image} />
-
-              <div className="flex items-center">
                 {updatedAt ? (
                   <span className="text-xs text-muted-foreground">
                     (edited)
@@ -150,6 +163,7 @@ export const Message = ({
                   </button>
                 </Hint>
               </div>
+                <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
           {!isEditing && (
@@ -160,7 +174,7 @@ export const Message = ({
               handleThread={() => {}}
               handleDelete={handleRemove}
               hideThreadButton={hideThreadButton}
-              handleReaction={() => {}}
+              handleReaction={handleReaction}
             />
           )}
         </div>
@@ -212,12 +226,15 @@ export const Message = ({
                     {format(new Date(createdAt), "hh:mm a")}
                   </button>
                 </Hint>
+                {updatedAt ? (
+                <span className="text-xs text-muted-foreground">(edited)</span>
+              ) : null}
               </div>
               <Renderer value={body} />
               <Thumbnail url={image} />
-              {updatedAt ? (
-                <span className="text-xs text-muted-foreground">(edited)</span>
-              ) : null}
+             
+                <Reactions data={reactions} onChange={handleReaction} />
+
             </div>
           )}
         </div>
@@ -229,7 +246,7 @@ export const Message = ({
             handleThread={() => {}}
             handleDelete={handleRemove}
             hideThreadButton={hideThreadButton}
-            handleReaction={() => {}}
+            handleReaction={handleReaction}
           />
         )}
       </div>
