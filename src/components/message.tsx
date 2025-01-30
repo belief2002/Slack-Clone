@@ -13,6 +13,7 @@ import { useRemoveMessage } from "@/features/messages/api/use-remove-message";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useToggleReaction } from "@/features/reactions/api/use-toggle-reaction";
 import { Reactions } from "./Reactions";
+import { usePanel } from "@/hooks/use-panel";
 
 const Renderer = dynamic(() => import("@/components/renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -65,6 +66,7 @@ export const Message = ({
   threadImage,
   threadTimestamp,
 }: MessageProps) => {
+  const { parentMessageId, onOpenMessage, onClose } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Delete messaage?",
     "Are you sure you want to delete this message? This action cannot be undone."
@@ -78,14 +80,16 @@ export const Message = ({
 
   const isPending = isUpdatingMessage;
 
-  const handleReaction = (value:string) =>{
-    toggleReaction({messageId: id, value},{
-      
-      onError: (error) => {
-        toast.error("Failed to add reaction");
-      },
-    })
-  }
+  const handleReaction = (value: string) => {
+    toggleReaction(
+      { messageId: id, value },
+      {
+        onError: (error) => {
+          toast.error("Failed to add reaction");
+        },
+      }
+    );
+  };
 
   const handleRemove = async () => {
     const ok = await confirm();
@@ -97,8 +101,9 @@ export const Message = ({
       {
         onSuccess: () => {
           toast.success("Message deleted successfully");
-
-          // TODO: close thread if opened
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: (error) => {
           toast.error("Failed to delete message");
@@ -148,10 +153,9 @@ export const Message = ({
             </div>
           ) : (
             <div className="flex text-xs flex-col items-start w-full ml-8 gap-x-2">
-
               <div className="flex gap-x-1 items-center">
-              <Renderer value={body} />
-              <Thumbnail url={image} />
+                <Renderer value={body} />
+                <Thumbnail url={image} />
                 {updatedAt ? (
                   <span className="text-xs text-muted-foreground">
                     (edited)
@@ -163,7 +167,7 @@ export const Message = ({
                   </button>
                 </Hint>
               </div>
-                <Reactions data={reactions} onChange={handleReaction} />
+              <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
           {!isEditing && (
@@ -171,7 +175,7 @@ export const Message = ({
               isAuthor={isAuthor}
               isPending={false}
               handleEdit={() => setEditingId(id)}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id)}
               handleDelete={handleRemove}
               hideThreadButton={hideThreadButton}
               handleReaction={handleReaction}
@@ -227,14 +231,15 @@ export const Message = ({
                   </button>
                 </Hint>
                 {updatedAt ? (
-                <span className="text-xs text-muted-foreground">(edited)</span>
-              ) : null}
+                  <span className="text-xs text-muted-foreground">
+                    (edited)
+                  </span>
+                ) : null}
               </div>
               <Renderer value={body} />
               <Thumbnail url={image} />
-             
-                <Reactions data={reactions} onChange={handleReaction} />
 
+              <Reactions data={reactions} onChange={handleReaction} />
             </div>
           )}
         </div>
@@ -243,7 +248,7 @@ export const Message = ({
             isAuthor={isAuthor}
             isPending={isPending}
             handleEdit={() => setEditingId(id)}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id)}
             handleDelete={handleRemove}
             hideThreadButton={hideThreadButton}
             handleReaction={handleReaction}

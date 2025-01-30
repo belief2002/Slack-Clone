@@ -9,7 +9,7 @@ import { useGetWorspace } from "@/features/workspaces/api/use-get-workspace";
 import { useGetWorspaces } from "@/features/workspaces/api/use-get-workspaces";
 import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { Loader2, Plus } from "lucide-react";
+import { Loader, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export const WorkspaceSwitcher = () => {
@@ -29,7 +29,7 @@ export const WorkspaceSwitcher = () => {
       <DropdownMenuTrigger asChild>
         <Button className="relative size-9 overflow-hidden bg-[#ABABAD] hover:bg-[#ABABAD]/80 text-slate-800 font-semibold text-xl">
           {workspaceLoading ? (
-            <Loader2 className="size-5 animate-spin shrink-0" />
+            <Loader className="size-5 animate-spin shrink-0" />
           ) : (
             workspace?.name.charAt(0).toUpperCase()
           )}

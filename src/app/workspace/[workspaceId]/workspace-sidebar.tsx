@@ -4,7 +4,7 @@ import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import {
   AlertTriangle,
   HashIcon,
-  Loader2,
+  Loader,
   MessageSquareText,
   SendHorizonal,
 } from "lucide-react";
@@ -39,7 +39,7 @@ export const WorkspaceSidebar = () => {
   if (workspaceLoading || memberLoading) {
     return (
       <div className="flex justify-center items-center flex-col h-full bg-[#5E2C5F]">
-        <Loader2 className=" animate-spin size-5 text-white" />
+        <Loader className=" animate-spin size-5 text-white" />
       </div>
     );
   }
