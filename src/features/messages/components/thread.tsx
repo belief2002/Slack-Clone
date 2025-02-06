@@ -4,7 +4,7 @@ import { AlertTriangle, Loader, XIcon } from "lucide-react";
 import { useGetMessage } from "../api/use-get-message";
 import { Message } from "@/components/message";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
-import { useCurrentMember } from "@/features/members/use-current-member";
+import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Quill from "quill";
