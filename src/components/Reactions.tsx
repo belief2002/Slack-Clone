@@ -29,6 +29,7 @@ export const Reactions = ({ data, onChange }: ReactionsProps) => {
     <div className="flex items-center mt-1 mb-1 gap-1">
       {data.map((reaction) => (
         <button
+        key={reaction._id}
           onClick={() => onChange(reaction.value)}
           className={cn(
             "h-6 px-2 rounded-full bg-slate-200/70 border border-transparent text-slate-800 flex items-center gap-x-1",

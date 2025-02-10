@@ -1,9 +1,7 @@
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTrigger,
-  DialogTitle,
 } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
 interface ThumbnailProps {

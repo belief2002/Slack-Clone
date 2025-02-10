@@ -14,7 +14,7 @@ import { useEffect, useMemo } from "react";
 //     workspaceId: string;
 //   };
 // }
-const workspaceIdPage = () => {
+const WorkspaceIdPage = () => {
   const router = useRouter();
   const workspaceId = useWorkspaceId();
   const [open, setOpen] = useCreateChannelModal();
@@ -75,4 +75,4 @@ const workspaceIdPage = () => {
     </div>
   )};
 
-export default workspaceIdPage;
+export default WorkspaceIdPage;

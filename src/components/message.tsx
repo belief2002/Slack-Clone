@@ -87,7 +87,7 @@ export const Message = ({
     toggleReaction(
       { messageId: id, value },
       {
-        onError: (error) => {
+        onError: () => {
           toast.error("Failed to add reaction");
         },
       }
@@ -108,7 +108,7 @@ export const Message = ({
             onClose();
           }
         },
-        onError: (error) => {
+        onError: () => {
           toast.error("Failed to delete message");
         },
       }
@@ -123,9 +123,7 @@ export const Message = ({
           toast.success("Message updated successfully");
           setEditingId(null);
         },
-        onError: (error) => {
-          console.log(error);
-
+        onError: () => {
           toast.error("Failed to update message");
         },
       }

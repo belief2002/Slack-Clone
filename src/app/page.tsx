@@ -6,7 +6,7 @@ import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
   const [open, setOpen] = useCreateWorkspaceModal();
   const { data, isLoading } = useGetWorspaces();
 
@@ -18,12 +18,11 @@ export default function Home() {
     if (workspaceId) {
       // redirect to workspace page
       console.log("Redirecting to workspace");
-      router.replace(`workspace/${workspaceId}`)
-
+      router.replace(`workspace/${workspaceId}`);
     } else if (!open) {
       setOpen(true);
     }
-  }, [workspaceId, isLoading, open, setOpen]);
+  }, [workspaceId, isLoading, open, setOpen, router]);
   return (
     <div>
       <UserButton />
