@@ -41,7 +41,7 @@ export const Toolbar = () => {
             <CommandEmpty>No result found.</CommandEmpty>
             <CommandGroup heading="Channels">
               {channels?.map((channel) => (
-                <CommandItem onSelect={()=>setOpen(false)} asChild>
+                <CommandItem key={channel._id} onSelect={()=>setOpen(false)} asChild>
                     <Link href={`/workspace/${workspaceId}/channel/${channel._id}`}>
                     {channel.name}
                     </Link>
@@ -51,7 +51,7 @@ export const Toolbar = () => {
             <CommandSeparator />
             <CommandGroup heading="Members">
               {members?.map((member) => (
-                <CommandItem onSelect={()=>setOpen(false)} asChild>
+                <CommandItem key={member._id} onSelect={()=>setOpen(false)} asChild>
                     <Link href={`/workspace/${workspaceId}/member/${member._id}`}>
                     {member.user.name}
                     </Link>
