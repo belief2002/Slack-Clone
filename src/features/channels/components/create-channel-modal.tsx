@@ -44,7 +44,7 @@ export const CreateChannelModal = () => {
           handleClose();
         },
         onError: () => {
-          // TODO: Show error message
+          
           toast.error("Failed to create channel")
         },
       }
