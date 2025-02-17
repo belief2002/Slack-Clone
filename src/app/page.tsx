@@ -4,6 +4,7 @@ import { UserButton } from "../features/auth/components/user-button";
 import { useEffect, useMemo } from "react";
 import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-workspace-modal";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
@@ -24,8 +25,8 @@ export default function Home() {
     }
   }, [workspaceId, isLoading, open, setOpen, router]);
   return (
-    <div>
-      <UserButton />
+    <div className="flex items-center justify-center h-full">
+      <Loader className="size-4 animate-spin text-muted-foreground" />
     </div>
   );
 }
