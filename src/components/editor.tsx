@@ -85,7 +85,9 @@ const Editor = ({
               handler: () => {
                 const text = quill.getText();
                 const addedImage = imageElementRef.current?.files?.[0] || null;
-                const isEmpty =!addedImage && text.replace(/<(.|\n)*?>/g, "").trim().length === 0 ;
+                const isEmpty =
+                  !addedImage &&
+                  text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
                 if (isEmpty) {
                   return;
@@ -161,10 +163,12 @@ const Editor = ({
         }}
         className="hidden"
       />
-      <div className={cn(
-        "flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
-        disabled && "opacity-50"
-        )}>
+      <div
+        className={cn(
+          "flex flex-col border border-slate-200 rounded-md overflow-hidden focus-within:border-slate-300 focus-within:shadow-sm transition bg-white",
+          disabled && "opacity-50"
+        )}
+      >
         <div ref={containerRef} className="h-full ql-custom" />
         {!!image && (
           <div className="p-2">
@@ -189,7 +193,7 @@ const Editor = ({
             </div>
           </div>
         )}
-        <div className="flex px-2 pb-2 z-[5]">
+        <div className="flex px-2 z-[5]">
           <Hint
             label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
           >

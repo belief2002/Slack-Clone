@@ -153,7 +153,7 @@ export const Message = ({
               />
             </div>
           ) : (
-            <div className="flex text-xs flex-col items-start w-full ml-8 gap-x-2">
+            <div className="flex text-xs flex-col items-start w-full pl-8 gap-x-2">
               <div className="flex gap-x-1 items-center">
                 <Renderer value={body} />
                 <Thumbnail url={image} />
